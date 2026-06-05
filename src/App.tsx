@@ -54,6 +54,7 @@ export default function App() {
   const [data, setData] = useState<Creative[]>(INITIAL_DATA);
   const [filter, setFilter] = useState<string>('Semua');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPerson, setSelectedPerson] = useState<Creative | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Dark Mode State
@@ -244,54 +245,32 @@ export default function App() {
             {filteredData.map((person) => {
               const catClass = getColorForCategory(person.category);
               return (
-                <div key={person.id} className="group relative aspect-square sm:aspect-[4/5] rounded-2xl sm:rounded-[32px] overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:shadow-teal-500/10 transition-all duration-500 transform hover:-translate-y-1">
-                  <img 
-                    src={getDisplayImage(person)} 
-                    alt={person.name} 
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                    loading="lazy"
-                    onError={(e) => {
-                      const target = e.currentTarget;
-                      if (!target.src.includes('ui-avatars.com')) {
-                        target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512`;
-                      }
-                    }}
-                  />
-                  
-                  {/* Gradient overlay for better text readability */}
-                  <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none"></div>
-
-                  <div className="absolute inset-x-2 bottom-2 sm:inset-x-3 sm:bottom-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col transition-colors duration-300">
-                    <h3 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-tight truncate px-0.5">{person.name}</h3>
-                    
-                    <div className="flex flex-wrap gap-1 mt-1 sm:mt-1.5 px-0.5 mb-2 sm:mb-2.5">
-                      <span className={`inline-block px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-semibold border ${catClass}`}>
-                        {person.category}
-                      </span>
-                    </div>
-                    
-                    <p className="hidden sm:-webkit-box text-xs text-slate-600 dark:text-slate-400 font-inter line-clamp-2 leading-relaxed px-0.5">
-                      {person.bio}
-                    </p>
-                    
-                    <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-4 px-0.5">
-                      {person.ig && (
-                        <a href={person.ig} target="_blank" rel="noreferrer" className="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">
-                          <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </a>
-                      )}
-                      {person.customLink && (
-                        <a href={person.customLink} target="_blank" rel="noreferrer" className="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">
-                          <AtSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </a>
-                      )}
-                      {person.web && (
-                        <a href={person.web} target="_blank" rel="noreferrer" className="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">
-                          <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        </a>
-                      )}
+                <div key={person.id} onClick={() => setSelectedPerson(person)} className="cursor-pointer group relative p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[32px] overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:shadow-teal-500/10 transition-all duration-500 transform hover:-translate-y-1 flex flex-col h-full min-h-[200px] sm:min-h-[220px]">
+                  <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
+                    <img 
+                      src={getDisplayImage(person)} 
+                      alt={person.name} 
+                      className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full object-cover border-2 border-slate-100 dark:border-slate-800 shadow-sm shrink-0" 
+                      loading="lazy"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (!target.src.includes('ui-avatars.com')) {
+                          target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512`;
+                        }
+                      }}
+                    />
+                    <div className="flex flex-col pt-0 sm:pt-1">
+                      <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 dark:text-white leading-tight break-words line-clamp-2">{person.name}</h3>
+                      <div className="mt-1.5 sm:mt-2 text-left">
+                        <span className={`inline-block px-2 py-0.5 sm:py-1 rounded text-[9px] sm:text-[10px] lg:text-xs font-semibold border ${catClass}`}>
+                          {person.category}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-inter line-clamp-3 lg:line-clamp-4 leading-relaxed flex-1 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+                    {person.bio}
+                  </p>
                 </div>
               )
             })}
@@ -304,6 +283,58 @@ export default function App() {
           NONGTKI &copy; 2026. <span className="hidden sm:inline">&bull;</span> <span className="block sm:inline mt-1 sm:mt-0">FROM SURABAYA WITH ❤️</span>
         </div>
       </footer>
+
+      {/* Detail Modal Overlay */}
+      {selectedPerson && (
+        <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setSelectedPerson(null)}>
+          <div className="relative w-full h-[90vh] sm:h-auto sm:max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl sm:rounded-3xl rounded-t-3xl flex flex-col max-h-[95vh] sm:max-h-[90vh] overflow-hidden transform scale-100 transition-transform p-0" onClick={e => e.stopPropagation()}>
+             <div className="relative h-32 sm:h-40 bg-teal-600 dark:bg-teal-900 overflow-hidden shrink-0">
+               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")" }}></div>
+               <button onClick={() => setSelectedPerson(null)} className="absolute top-4 right-4 text-white/80 hover:text-white bg-black/20 hover:bg-black/40 rounded-full p-2 transition-colors z-10">
+                  <X className="w-5 h-5" />
+               </button>
+             </div>
+             <div className="px-6 pb-8 pt-0 relative flex-1 overflow-y-auto hide-scrollbar">
+               <img src={getDisplayImage(selectedPerson)} className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg mx-auto -mt-12 sm:-mt-14 relative z-10 bg-white" />
+               <div className="text-center mt-3 mb-6">
+                 <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-tight">{selectedPerson.name}</h2>
+                 <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold border ${getColorForCategory(selectedPerson.category)}`}>
+                   {selectedPerson.category}
+                 </span>
+               </div>
+               <div className="space-y-6">
+                 <div>
+                   <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Tentang</h4>
+                   <p className="text-slate-700 dark:text-slate-300 font-inter text-sm leading-relaxed">{selectedPerson.bio}</p>
+                 </div>
+                 
+                 {(selectedPerson.ig || selectedPerson.web || selectedPerson.customLink) && (
+                   <div>
+                     <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Hubungi / Portofolio</h4>
+                     <div className="flex flex-col gap-3">
+                       {selectedPerson.ig && (
+                         <a href={selectedPerson.ig} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm border border-slate-200 dark:border-slate-700 font-medium text-sm">
+                           <Instagram className="w-5 h-5 text-pink-600 dark:text-pink-400" /> Instagram
+                         </a>
+                       )}
+                       {selectedPerson.web && (
+                         <a href={selectedPerson.web} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm border border-slate-200 dark:border-slate-700 font-medium text-sm">
+                           <Globe className="w-5 h-5 text-teal-600 dark:text-teal-400" /> Website / Behance
+                         </a>
+                       )}
+                       {selectedPerson.customLink && (
+                         <a href={selectedPerson.customLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm border border-slate-200 dark:border-slate-700 font-medium text-sm">
+                           <AtSign className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Link Lainnya
+                         </a>
+                       )}
+                     </div>
+                   </div>
+                 )}
+               </div>
+             </div>
+          </div>
+        </div>
+      )}
 
       {/* Registration Modal Overlay - Sleek Glassmorphism */}
       {isModalOpen && (
