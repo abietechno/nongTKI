@@ -112,6 +112,20 @@
       .ambilData();
   }
 
+  function getDisplayImage(person) {
+    if (person.photo && person.photo.trim() !== '') return person.photo;
+    if (person.ig && person.ig.trim() !== '') {
+      var match = person.ig.match(/(?:instagram\.com|ig\.me)\/([^/?]+)/i);
+      if (match && match[1]) {
+        return 'https://unavatar.io/instagram/' + match[1] + '?fallback=' + encodeURIComponent('https://ui-avatars.com/api/?name=' + encodeURIComponent(person.name) + '&background=0D8B93&color=fff&size=512');
+      }
+    }
+    if (person.web && person.web.trim() !== '') {
+      return 'https://image.thum.io/get/width/600/crop/800/' + person.web;
+    }
+    return 'https://ui-avatars.com/api/?name=' + encodeURIComponent(person.name) + '&background=0D8B93&color=fff&size=512';
+  }
+
   function getSVGIcon(type) {
     if(type === 'ig') return `<svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
     if(type === 'customLink') return `<svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>`;
@@ -136,9 +150,10 @@
 
     grid.innerHTML = data.map(person => {
       const catClass = getColorClass(person.category);
+      const displayImage = getDisplayImage(person);
       return `
         <div class="group relative aspect-square sm:aspect-[4/5] rounded-2xl sm:rounded-[32px] overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:shadow-teal-500/10 transition-all duration-500 transform hover:-translate-y-1">
-          <img src="${person.photo || ''}" alt="${person.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'">
+          <img src="${displayImage}" alt="${person.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="if(!this.src.includes('ui-avatars.com')){this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512';}">
           
           <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none"></div>
           

@@ -33,6 +33,23 @@ const getColorForCategory = (cat: string) => {
   return colors[hash % colors.length];
 };
 
+const getDisplayImage = (person: Creative) => {
+  if (person.photo && person.photo.trim() !== '') return person.photo;
+  
+  if (person.ig && person.ig.trim() !== '') {
+    const match = person.ig.match(/(?:instagram\.com|ig\.me)\/([^/?]+)/i);
+    if (match && match[1]) {
+      return `https://unavatar.io/instagram/${match[1]}?fallback=` + encodeURIComponent(`https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512`);
+    }
+  }
+  
+  if (person.web && person.web.trim() !== '') {
+    return `https://image.thum.io/get/width/600/crop/800/${person.web}`;
+  }
+  
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512`;
+};
+
 export default function App() {
   const [data, setData] = useState<Creative[]>(INITIAL_DATA);
   const [filter, setFilter] = useState<string>('Semua');
@@ -229,10 +246,16 @@ export default function App() {
               return (
                 <div key={person.id} className="group relative aspect-square sm:aspect-[4/5] rounded-2xl sm:rounded-[32px] overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:shadow-teal-500/10 transition-all duration-500 transform hover:-translate-y-1">
                   <img 
-                    src={person.photo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'} 
+                    src={getDisplayImage(person)} 
                     alt={person.name} 
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                     loading="lazy"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.src.includes('ui-avatars.com')) {
+                        target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512`;
+                      }
+                    }}
                   />
                   
                   {/* Gradient overlay for better text readability */}
@@ -315,9 +338,9 @@ export default function App() {
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5 text-xs flex items-center gap-1.5">
-                    URL Foto Wajah / Logo <span className="bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 px-1.5 py-0.5 rounded text-[10px] font-medium border border-teal-200 dark:border-teal-500/30">Wajib</span>
+                    URL Foto Wajah / Logo <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded text-[10px] font-medium border border-slate-200 dark:border-slate-700">Opsional</span>
                   </label>
-                  <input required value={formData.photo} onChange={e => setFormData({...formData, photo: e.target.value})} type="url" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none transition-all placeholder:text-slate-400 dark:text-white" placeholder="https://unsplash.com/..." />
+                  <input value={formData.photo} onChange={e => setFormData({...formData, photo: e.target.value})} type="url" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none transition-all placeholder:text-slate-400 dark:text-white" placeholder="https://unsplash.com/..." />
                 </div>
                 
                 <div className="border-t border-slate-200 dark:border-slate-800 pt-5 mt-2">
