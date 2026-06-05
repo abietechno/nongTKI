@@ -1,15 +1,3 @@
-function doGet() {
-  return HtmlService.createTemplateFromFile('Index')
-    .evaluate()
-    .setTitle('NongTKI - Nongkrong Tenaga Kerja Indie')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
-}
-
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent();
-}
-
 function getSheet() {
   // TODO: Ganti dengan ID Google Sheet Anda
   const SHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; 
@@ -18,16 +6,18 @@ function getSheet() {
   return ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
 }
 
-function ambilData() {
+function doGet(e) {
   try {
     const sheet = getSheet();
     const data = sheet.getDataRange().getValues();
-    if (data.length <= 1) return []; // Hanya row header
+    if (data.length <= 1) {
+      return ContentService.createTextOutput(JSON.stringify([]))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
     
     const rows = data.slice(1);
     
-    return rows.map((row, i) => {
-      // Index menyesuaikan dengan kolom di Sheet 
+    const formattedData = rows.map((row, i) => {
       // [Timestamp, Nama, Kategori, Bio, IG, CustomLink, Web, URL_Foto]
       return {
         id: i.toString(),
@@ -39,13 +29,17 @@ function ambilData() {
         web: row[6] || '',
         photo: row[7] || ''
       };
-    }).reverse(); // Yang paling baru di atas
+    }).reverse();
+    
+    return ContentService.createTextOutput(JSON.stringify(formattedData))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    return { error: error.toString() };
+    return ContentService.createTextOutput(JSON.stringify({ error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-function simpanData(formData) {
+function doPost(e) {
   try {
     const sheet = getSheet();
     
@@ -54,18 +48,26 @@ function simpanData(formData) {
       sheet.appendRow(['Timestamp', 'Nama', 'Kategori', 'Deskripsi/Bio', 'Link Instagram', 'Custom Link', 'Link Website', 'URL Foto']);
     }
     
+    let formData = {};
+    if (e.postData && e.postData.contents) {
+      formData = JSON.parse(e.postData.contents);
+    }
+    
     sheet.appendRow([
       new Date(),
-      formData.name,
-      formData.category,
-      formData.bio,
-      formData.ig,
-      formData.customLink,
-      formData.web,
-      formData.photo
+      formData.name || '',
+      formData.category || '',
+      formData.bio || '',
+      formData.ig || '',
+      formData.customLink || '',
+      formData.web || '',
+      formData.photo || ''
     ]);
-    return { success: true };
+    
+    return ContentService.createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    return { success: false, error: error.toString() };
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
