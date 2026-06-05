@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Instagram, AtSign, Globe, Plus, X, BriefcaseBusiness, Loader2, Moon, Sun } from 'lucide-react';
+import { Instagram, AtSign, Globe, Plus, X, BriefcaseBusiness, Loader2, Moon, Sun, Phone, Mail } from 'lucide-react';
 import { Category, Creative } from './types';
 
 // Mock Data for the immediate AI Studio preview (not connected to GAS)
@@ -84,7 +84,7 @@ export default function App() {
   const dynamicCategories = ['Semua', ...Array.from(new Set(data.map(item => item.category)))];
 
   // Form State
-  const [formData, setFormData] = useState({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '' });
+  const [formData, setFormData] = useState({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const ENDPOINT_API = import.meta.env.VITE_GAS_ENDPOINT_URL;
@@ -134,7 +134,7 @@ export default function App() {
         setData((prev) => [newEntry, ...prev]);
         
         setIsModalOpen(false);
-        setFormData({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '' });
+        setFormData({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '' });
         setFilter('Semua');
       } catch (error) {
         console.error("Gagal simpan:", error);
@@ -152,7 +152,7 @@ export default function App() {
         setData((prev) => [newEntry, ...prev]);
         setIsSubmitting(false);
         setIsModalOpen(false);
-        setFormData({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '' });
+        setFormData({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '' });
         setFilter('Semua');
       }, 1200);
     }
@@ -320,10 +320,20 @@ export default function App() {
                    <p className="text-slate-700 dark:text-slate-300 font-inter text-sm leading-relaxed">{selectedPerson.bio}</p>
                  </div>
                  
-                 {(selectedPerson.ig || selectedPerson.web || selectedPerson.customLink) && (
+                 {(selectedPerson.ig || selectedPerson.web || selectedPerson.customLink || selectedPerson.phone || selectedPerson.email) && (
                    <div>
                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Hubungi / Portofolio</h4>
                      <div className="flex flex-col gap-3">
+                       {selectedPerson.phone && (
+                         <a href={`https://wa.me/${selectedPerson.phone.replace(/[^0-9]/g, '').replace(/^0/, '62')}`} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm border border-slate-200 dark:border-slate-700 font-medium text-sm">
+                           <Phone className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> WhatsApp / Telepon
+                         </a>
+                       )}
+                       {selectedPerson.email && (
+                         <a href={`mailto:${selectedPerson.email}`} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm border border-slate-200 dark:border-slate-700 font-medium text-sm">
+                           <Mail className="w-5 h-5 text-amber-600 dark:text-amber-400" /> Email
+                         </a>
+                       )}
                        {selectedPerson.ig && (
                          <a href={selectedPerson.ig} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm border border-slate-200 dark:border-slate-700 font-medium text-sm">
                            <Instagram className="w-5 h-5 text-pink-600 dark:text-pink-400" /> Instagram
@@ -387,8 +397,20 @@ export default function App() {
                 </div>
                 
                 <div className="border-t border-slate-200 dark:border-slate-800 pt-5 mt-2">
-                  <p className="font-semibold text-slate-600 dark:text-slate-400 mb-4 text-xs">Link Sosial & Portofolio (Opsional)</p>
+                  <p className="font-semibold text-slate-600 dark:text-slate-400 mb-4 text-xs">Kontak, Link Sosial & Portofolio (Opsional)</p>
                   <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div>
+                      <label className="block font-medium text-slate-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5 text-[10px] sm:text-xs">
+                         <Phone className="w-3.5 h-3.5" /> No. WhatsApp
+                      </label>
+                      <input value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} type="tel" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm focus:border-teal-500 focus:outline-none dark:text-white transition-colors placeholder:text-slate-400" placeholder="08..." />
+                    </div>
+                    <div>
+                      <label className="block font-medium text-slate-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5 text-[10px] sm:text-xs">
+                         <Mail className="w-3.5 h-3.5" /> Email
+                      </label>
+                      <input value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} type="email" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm focus:border-teal-500 focus:outline-none dark:text-white transition-colors placeholder:text-slate-400" placeholder="email@..." />
+                    </div>
                     <div>
                       <label className="block font-medium text-slate-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5 text-[10px] sm:text-xs">
                          <Instagram className="w-3.5 h-3.5" /> Instagram

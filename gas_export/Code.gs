@@ -18,7 +18,7 @@ function doGet(e) {
     const rows = data.slice(1);
     
     const formattedData = rows.map((row, i) => {
-      // [Timestamp, Nama, Kategori, Bio, IG, CustomLink, Web, URL_Foto]
+      // [Timestamp, Nama, Kategori, Bio, IG, CustomLink, Web, URL_Foto, No_WhatsApp, Email]
       return {
         id: i.toString(),
         name: row[1] || '',
@@ -27,7 +27,9 @@ function doGet(e) {
         ig: row[4] || '',
         customLink: row[5] || '',
         web: row[6] || '',
-        photo: row[7] || ''
+        photo: row[7] || '',
+        phone: row[8] || '',
+        email: row[9] || ''
       };
     }).reverse();
     
@@ -45,7 +47,7 @@ function doPost(e) {
     
     // Setup header jika sheet kosong
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Timestamp', 'Nama', 'Kategori', 'Deskripsi/Bio', 'Link Instagram', 'Custom Link', 'Link Website', 'URL Foto']);
+      sheet.appendRow(['Timestamp', 'Nama', 'Kategori', 'Deskripsi/Bio', 'Link Instagram', 'Custom Link', 'Link Website', 'URL Foto', 'No WhatsApp', 'Email']);
     }
     
     let formData = {};
@@ -61,7 +63,9 @@ function doPost(e) {
       formData.ig || '',
       formData.customLink || '',
       formData.web || '',
-      formData.photo || ''
+      formData.photo || '',
+      formData.phone || '',
+      formData.email || ''
     ]);
     
     return ContentService.createTextOutput(JSON.stringify({ success: true }))

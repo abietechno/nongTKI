@@ -9,4 +9,6 @@ export interface Creative {
   customLink?: string;
   web?: string;
   photo?: string;
+  phone?: string;
+  email?: string;
 }
