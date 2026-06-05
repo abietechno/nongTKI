@@ -5,130 +5,161 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NongTKI</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Bricolage Grotesque', 'sans-serif'],
+            inter: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-    .font-inter { font-family: 'Inter', sans-serif; }
+    body { font-family: 'Bricolage Grotesque', sans-serif; }
+    .font-inter { font-family: 'Plus Jakarta Sans', sans-serif; }
     .skeleton { background: #e2e8f0; border-radius: 12px; animation: pulse 1.5s infinite; }
+    .dark .skeleton { background: #1e293b; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: .5; } 100% { opacity: 1; } }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="text-slate-800 dark:text-slate-200 antialiased min-h-screen flex flex-col relative z-0 bg-slate-50 dark:bg-[#0B1215] transition-colors duration-300">
   
-  <nav class="bg-white/80 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-40">
+  <!-- Tosca/Glassmorphism Background Elements -->
+  <div class="absolute inset-0 z-[-1] pointer-events-none overflow-hidden transition-opacity duration-500 opacity-60 dark:opacity-30">
+    <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-tr from-teal-400/30 to-transparent blur-[120px]"></div>
+    <div class="absolute bottom-[-10%] right-[-5%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-bl from-emerald-400/20 to-transparent blur-[120px]"></div>
+    <div class="absolute top-[20%] right-[10%] w-[35vw] h-[35vw] rounded-full bg-gradient-to-b from-cyan-300/30 to-transparent blur-[100px]"></div>
+    <div class="absolute inset-0 border border-transparent opacity-[0.03] dark:opacity-[0.02]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.7\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E')"></div>
+  </div>
+
+  <nav class="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border-b border-white/50 dark:border-white/5 sticky top-0 z-40 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-14 sm:h-16 items-center">
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold text-sm sm:text-base">NT</div>
-          <h1 class="text-lg sm:text-xl font-bold tracking-tight">Nong<span class="text-slate-500">TKI</span></h1>
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-teal-600 dark:bg-teal-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 text-sm font-bold">NT</div>
+          <h1 class="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100">Nong<span class="text-teal-600 dark:text-teal-400">TKI</span></h1>
         </div>
-        <button onclick="toggleModal('registerModal')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all shadow-sm active:scale-95">
-          <span class="sm:hidden">Daftar</span>
-          <span class="hidden sm:inline">Daftar Direktori</span>
-        </button>
+        
+        <div class="flex items-center gap-2.5 sm:gap-4">
+          <button 
+            onclick="toggleDarkMode()" 
+            class="p-2 cursor-pointer rounded-full bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition-colors shadow-sm"
+            aria-label="Toggle Dark Mode"
+          >
+            <svg id="moonIcon" class="w-4 h-4 sm:w-4 sm:h-4 text-slate-600 dark:text-slate-300 transition-all dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            <svg id="sunIcon" class="w-4 h-4 sm:w-4 sm:h-4 text-slate-600 dark:text-slate-300 transition-all hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          </button>
+
+          <button onclick="toggleModal('registerModal')" class="bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all shadow-md shadow-teal-600/20 active:scale-95 flex items-center gap-2">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            <span class="hidden sm:inline">Daftar Direktori</span>
+            <span class="sm:hidden">Daftar</span>
+          </button>
+        </div>
       </div>
     </div>
   </nav>
 
   <main class="flex-1 w-full max-w-7xl mx-auto pb-12 sm:py-12">
-    <div class="text-center px-4 pt-8 pb-6 sm:mb-12">
-      <div class="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 font-medium text-xs mb-4 border border-slate-200">
+    <div class="text-center px-4 pt-10 pb-8 sm:mb-10">
+      <div class="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-300 font-medium text-xs mb-6 border border-teal-200/50 dark:border-teal-500/20 shadow-sm">
         <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-500"></span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
         </span>
-        Direktori Para Penggerak dan pelaku Kreatif Surabaya
+        Direktori Para Penggerak & Pelaku Kreatif Surabaya
       </div>
-      <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mb-3 sm:mb-4">Nongkrong Tenaga Kerja Indie</h2>
-      <p class="max-w-xl mx-auto text-slate-500 font-inter text-sm sm:text-base">Temukan dan mulai kolaborasi dengan talenta-talenta kreatif terbaik dari ranah visual, audio, hingga desain.</p>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-5 text-slate-900 dark:text-white leading-[1.1]">Nongkrong Tenaga<br>Kerja Indie</h2>
+      <p class="max-w-xl mx-auto text-slate-600 dark:text-slate-400 font-inter text-sm sm:text-base leading-relaxed">Temukan dan mulai kolaborasi dengan talenta-talenta kreatif terbaik dari ranah visual, audio, hingga desain di ekosistem lokal.</p>
     </div>
 
     <!-- Filters Category -->
-    <div class="flex flex-nowrap overflow-x-auto hide-scrollbar gap-2 mb-6 sm:mb-10 px-4 sm:px-0 sm:justify-center snap-x pb-2" id="categoryFilters">
+    <div class="flex overflow-x-auto hide-scrollbar gap-2 mb-8 sm:mb-12 px-4 sm:px-0 sm:justify-center snap-x pb-4" id="categoryFilters">
       <div class="h-8 w-20 sm:h-10 sm:w-24 skeleton rounded-full flex-shrink-0"></div>
       <div class="h-8 w-24 sm:h-10 sm:w-32 skeleton rounded-full flex-shrink-0"></div>
     </div>
 
     <!-- Loading Space -->
-    <div class="px-1.5 sm:px-4 xl:px-8">
-      <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1.5 sm:gap-6" id="creativeGrid">
-        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton rounded-xl sm:rounded-[32px]"></div>
-        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton rounded-xl sm:rounded-[32px]"></div>
-        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton rounded-xl sm:rounded-[32px]"></div>
-        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton hidden md:block rounded-xl sm:rounded-[32px]"></div>
-        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton hidden lg:block rounded-xl sm:rounded-[32px]"></div>
+    <div class="px-4 sm:px-0">
+      <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6" id="creativeGrid">
+        <div class="aspect-square sm:aspect-[4/5] skeleton rounded-2xl sm:rounded-[32px] animate-pulse"></div>
+        <div class="aspect-square sm:aspect-[4/5] skeleton rounded-2xl sm:rounded-[32px] animate-pulse"></div>
+        <div class="aspect-square sm:aspect-[4/5] skeleton rounded-2xl sm:rounded-[32px] animate-pulse hidden md:block"></div>
+        <div class="aspect-square sm:aspect-[4/5] skeleton rounded-2xl sm:rounded-[32px] animate-pulse hidden lg:block"></div>
       </div>
     </div>
   </main>
 
-  <footer class="border-t border-slate-200 bg-white py-8 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 text-center text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500 font-inter block sm:flex sm:items-center sm:justify-center gap-1">
-      NongTKI &copy; 2026. <span class="hidden sm:inline">&bull;</span> <span class="block sm:inline mt-1 sm:mt-0">From Surabaya with ❤️</span>
+  <footer class="border-t border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50 backdrop-blur-lg py-8 mt-auto z-10 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 text-center text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-slate-500 dark:text-slate-400 font-inter block sm:flex sm:items-center sm:justify-center gap-2">
+      NONGTKI &copy; 2026. <span class="hidden sm:inline">&bull;</span> <span class="block sm:inline mt-1 sm:mt-0">FROM SURABAYA WITH ❤️</span>
     </div>
   </footer>
 
   <!-- Modal Registration Form -->
-  <div id="registerModal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-200" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="toggleModal('registerModal')"></div>
-      <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-lg">
-        <form id="registerForm" onsubmit="submitForm(event)">
-          <div class="bg-white px-6 py-6 border-b border-slate-100 flex justify-between items-center">
-            <h3 class="text-lg font-bold text-slate-900">Form Kreator Baru</h3>
-            <button type="button" onclick="toggleModal('registerModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+  <div id="registerModal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-200" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex min-h-screen items-end sm:items-center justify-center sm:p-4 text-left">
+      <div class="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="toggleModal('registerModal')"></div>
+      
+      <div class="relative transform overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl transition-all w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl h-[90vh] sm:h-auto max-h-[95vh] sm:max-h-[90vh] flex flex-col">
+        <form id="registerForm" onsubmit="submitForm(event)" class="flex flex-col h-full">
+          
+          <div class="flex justify-between items-center px-5 py-4 sm:px-6 sm:py-5 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shrink-0">
+            <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Jadilah Bagian Direktori!</h3>
+            <button type="button" onclick="toggleModal('registerModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
-          <div class="px-6 py-5 space-y-5 max-h-[60vh] overflow-y-auto font-inter text-sm">
+          
+          <div class="p-4 sm:p-6 overflow-y-auto bg-slate-50/50 dark:bg-[#0B1215]/50 font-inter flex-1 hide-scrollbar space-y-4 sm:space-y-5">
             <div>
-              <label class="block font-medium text-slate-700 mb-1.5">Nama / Nama Bisnis</label>
-              <input type="text" id="name" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 transition-colors" placeholder="Cth: Budi Santoso / Budi Visuals">
+              <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5 text-xs">Nama Lengkap / Studio</label>
+              <input type="text" id="name" required class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none transition-all placeholder:text-slate-400 dark:text-white" placeholder="Cth: Budi Santoso / Budi Visuals">
             </div>
             <div>
-              <label class="block font-medium text-slate-700 mb-1.5">Kategori Bidang</label>
-              <select id="category" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 bg-white">
-                <option value="">Pilih Spesialisasi Pekerjaan...</option>
-                <option value="Photographer">Photographer</option>
-                <option value="Mural Art">Mural Art</option>
-                <option value="Sound Engineer">Sound Engineer</option>
-                <option value="Video Director">Video Director</option>
-                <option value="Graphic Designer">Graphic Designer</option>
-                <option value="Animator">Animator</option>
-              </select>
+              <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5 text-xs">Kategori Bidang / Spesialisasi (Kustom)</label>
+              <input type="text" id="category" list="category-suggestions" required class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none transition-all placeholder:text-slate-400 dark:text-white" placeholder="Cth: Video Editor, Muralist...">
+              <datalist id="category-suggestions"></datalist>
             </div>
             <div>
-              <label class="block font-medium text-slate-700 mb-1.5">Bio / Deskripsi Singkat</label>
-              <textarea id="bio" required rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800" placeholder="Ceritakan gaya, pengalaman, atau apa yang kamu tawarkan..."></textarea>
+              <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5 text-xs">Bio / Deskripsi Singkat</label>
+              <textarea id="bio" required rows="3" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none transition-all placeholder:text-slate-400 dark:text-white resize-none" placeholder="Ceritakan singkat tentang gaya karyamu..."></textarea>
             </div>
             <div>
-              <label class="block font-medium text-slate-700 mb-1.5">URL Cover Profil</label>
-              <input type="url" id="photo" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800" placeholder="https://link-ke-foto-mu.jpg">
+              <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5 text-xs flex items-center gap-1.5">URL Foto Wajah / Logo <span class="bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 px-1.5 py-0.5 rounded text-[10px] font-medium border border-teal-200 dark:border-teal-500/30">Wajib</span></label>
+              <input type="url" id="photo" required class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none transition-all placeholder:text-slate-400 dark:text-white" placeholder="https://link-ke-foto-mu.jpg">
             </div>
-            <div class="grid grid-cols-2 gap-4 border-t border-slate-100 pt-5">
-              <div class="col-span-2"><p class="font-medium text-slate-700 mb-[-5px]">Social & Portfolio</p></div>
-              <div>
-                <label class="block font-medium text-slate-600 mb-1.5 text-xs">Instagram</label>
-                <input type="url" id="ig" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-xs focus:border-slate-800 focus:outline-none" placeholder="https://instagram.com/...">
-              </div>
-              <div>
-                <label class="block font-medium text-slate-600 mb-1.5 text-xs">Threads</label>
-                <input type="url" id="threads" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-xs focus:border-slate-800 focus:outline-none" placeholder="https://threads.net/...">
-              </div>
-              <div class="col-span-2">
-                <label class="block font-medium text-slate-600 mb-1.5 text-xs">Website / Behance</label>
-                <input type="url" id="web" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-xs focus:border-slate-800 focus:outline-none" placeholder="https://...">
+            
+            <div class="border-t border-slate-200 dark:border-slate-800 pt-5 mt-2">
+              <p class="font-semibold text-slate-600 dark:text-slate-400 mb-4 text-xs">Link Sosial & Portofolio (Opsional)</p>
+              <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                <div>
+                  <label class="block font-medium text-slate-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5 text-[10px] sm:text-xs">Instagram</label>
+                  <input type="url" id="ig" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm focus:border-teal-500 focus:outline-none dark:text-white transition-colors placeholder:text-slate-400" placeholder="https://instagram.com/...">
+                </div>
+                <div>
+                  <label class="block font-medium text-slate-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5 text-[10px] sm:text-xs">Custom Link</label>
+                  <input type="url" id="customLink" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm focus:border-teal-500 focus:outline-none dark:text-white transition-colors placeholder:text-slate-400" placeholder="https://...">
+                </div>
+                <div class="col-span-2 mt-1">
+                  <label class="block font-medium text-slate-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5 text-[10px] sm:text-xs">Website / Behance</label>
+                  <input type="url" id="web" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm focus:border-teal-500 focus:outline-none dark:text-white transition-colors placeholder:text-slate-400" placeholder="https://...">
+                </div>
               </div>
             </div>
-          </div>
-          <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 rounded-b-2xl border-t border-slate-100">
-            <button type="submit" id="submitBtn" class="inline-flex w-full sm:w-auto justify-center items-center rounded-lg bg-slate-900 px-5 py-2.5 font-medium text-white hover:bg-slate-800 transition-colors">
-              Simpan Profil
-            </button>
-            <button type="button" onclick="toggleModal('registerModal')" class="inline-flex w-full sm:w-auto justify-center items-center rounded-lg bg-white border border-slate-300 px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-50 transition-colors">
-              Batal
-            </button>
+            
+            <div class="pt-2 pb-6 sm:pb-2 shrink-0">
+              <button type="submit" id="submitBtn" class="w-full py-3.5 sm:py-3.5 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 shadow-md shadow-teal-500/20 active:scale-[0.98]">
+                Simpan Profil
+              </button>
+            </div>
           </div>
         </form>
       </div>

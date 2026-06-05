@@ -5,8 +5,8 @@ export interface Creative {
   name: string;
   category: string;
   bio: string;
-  ig: string;
-  threads: string;
-  web: string;
-  photo: string;
+  ig?: string;
+  customLink?: string;
+  web?: string;
+  photo?: string;
 }

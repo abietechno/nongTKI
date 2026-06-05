@@ -1,18 +1,46 @@
 <script>
-  const categories = ['Semua', 'Photographer', 'Mural Art', 'Sound Engineer', 'Video Director', 'Graphic Designer', 'Animator'];
+  let categories = ['Semua'];
   let allCreatives = [];
   let currentFilter = 'Semua';
 
   const categoryColors = {
-    'Photographer': 'bg-blue-50 text-blue-700 border-blue-200',
-    'Mural Art': 'bg-pink-50 text-pink-700 border-pink-200',
-    'Sound Engineer': 'bg-violet-50 text-violet-700 border-violet-200',
-    'Video Director': 'bg-red-50 text-red-700 border-red-200',
-    'Graphic Designer': 'bg-amber-50 text-amber-700 border-amber-200',
-    'Animator': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    'Photographer': 'bg-teal-50/80 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30',
+    'Mural Art': 'bg-emerald-50/80 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30',
+    'Sound Engineer': 'bg-cyan-50/80 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30',
+    'Video Director': 'bg-sky-50/80 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300 border border-sky-200 dark:border-sky-500/30',
+    'Graphic Designer': 'bg-indigo-50/80 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30',
+    'Animator': 'bg-blue-50/80 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-200 dark:border-blue-500/30',
   };
 
+  function getColorClass(cat) {
+    if (categoryColors[cat]) return categoryColors[cat];
+    const colors = [
+      'bg-teal-50/80 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30',
+      'bg-emerald-50/80 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30',
+      'bg-cyan-50/80 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30',
+      'bg-sky-50/80 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300 border border-sky-200 dark:border-sky-500/30',
+    ];
+    let hash = 0;
+    for (let i = 0; i < cat.length; i++) { hash += cat.charCodeAt(i); }
+    return colors[hash % colors.length];
+  }
+
+  // Dark Mode Logic
+  function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    document.getElementById('moonIcon').classList.toggle('hidden', !!isDark);
+    document.getElementById('sunIcon').classList.toggle('hidden', !isDark);
+    // document.getElementById('sunIcon').classList.toggle('block', !!isDark);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    // Check initial dark mode via system pref
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+       document.documentElement.classList.add('dark');
+       document.getElementById('moonIcon').classList.add('hidden');
+       document.getElementById('sunIcon').classList.remove('hidden');
+       document.getElementById('sunIcon').classList.add('block');
+    }
     renderFilters();
     fetchData();
   });
@@ -33,10 +61,10 @@
     container.innerHTML = categories.map(cat => `
       <button 
         onclick="setFilter('${cat}')" 
-        class="whitespace-nowrap flex-shrink-0 snap-center px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
+        class="whitespace-nowrap px-4 py-2 flex-shrink-0 snap-center rounded-full text-xs sm:text-sm font-medium transition-all ${
           currentFilter === cat 
-            ? 'bg-slate-900 text-white shadow-md sm:scale-105' 
-            : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900'
+            ? 'bg-teal-600 dark:bg-teal-500 text-white shadow-md shadow-teal-600/20 scale-105' 
+            : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white shadow-sm'
         }"
         >
         ${cat}
@@ -64,6 +92,18 @@
           return;
         }
         allCreatives = response;
+        
+        // Update dynamic categories
+        const uniqueCategories = [...new Set(allCreatives.map(c => c.category))];
+        categories = ['Semua', ...uniqueCategories];
+        renderFilters();
+        
+        // Populate datalist
+        const datalist = document.getElementById('category-suggestions');
+        if (datalist) {
+          datalist.innerHTML = uniqueCategories.map(cat => `<option value="${cat}">`).join('');
+        }
+        
         renderGrid();
       })
       .withFailureHandler(() => {
@@ -73,9 +113,9 @@
   }
 
   function getSVGIcon(type) {
-    if(type === 'ig') return `<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
-    if(type === 'threads') return `<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>`;
-    if(type === 'web') return `<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>`;
+    if(type === 'ig') return `<svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
+    if(type === 'customLink') return `<svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>`;
+    if(type === 'web') return `<svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>`;
     return '';
   }
 
@@ -85,32 +125,38 @@
 
     if (data.length === 0) {
       grid.innerHTML = `
-        <div class="col-span-full py-16 px-4 bg-white rounded-2xl border border-slate-200 text-center">
-          <div class="text-4xl mb-3">📭</div>
-          <h3 class="text-lg font-bold text-slate-800">Tidak Ada Data</h3>
-          <p class="text-slate-500 font-inter text-sm mt-1">Belum ada pekerja kreatif yang terdaftar di kategori ini.</p>
+        <div class="col-span-full py-16 px-4 bg-white/50 dark:bg-slate-800/30 backdrop-blur-md rounded-3xl border border-slate-200 dark:border-slate-700/50 text-center mx-4 sm:mx-0">
+          <div class="text-5xl mb-4 text-slate-300 dark:text-slate-600">📭</div>
+          <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200">Tidak Ada Data</h3>
+          <p class="text-slate-500 dark:text-slate-400 font-inter text-sm mt-2">Belum ada pekerja kreatif yang terdaftar di kategori ini.</p>
         </div>
       `;
       return;
     }
 
     grid.innerHTML = data.map(person => {
+      const catClass = getColorClass(person.category);
       return `
-        <div class="group relative aspect-square sm:aspect-[3/4] lg:aspect-[4/5] rounded-xl sm:rounded-[32px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-black/5 bg-[#E6E6DF] transform hover:-translate-y-1">
-          <img src="${person.photo || ''}" alt="${person.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'">
+        <div class="group relative aspect-square sm:aspect-[4/5] rounded-2xl sm:rounded-[32px] overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:shadow-teal-500/10 transition-all duration-500 transform hover:-translate-y-1">
+          <img src="${person.photo || ''}" alt="${person.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'">
           
-          <div class="absolute inset-x-1 bottom-1 sm:inset-x-3 sm:bottom-3 bg-white/60 hover:bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-lg sm:rounded-2xl p-2 sm:p-5 flex flex-col transition-colors duration-300">
-            <h3 class="text-[10px] sm:text-lg lg:text-xl font-bold text-[#2A2A1A] leading-tight truncate px-0.5">${person.name}</h3>
-            <p class="text-[8px] sm:text-xs lg:text-sm font-semibold text-[#5A5A40] truncate sm:mt-1 px-0.5">${person.category}</p>
+          <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none"></div>
+          
+          <div class="absolute inset-x-2 bottom-2 sm:inset-x-3 sm:bottom-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col transition-colors duration-300">
+            <h3 class="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-tight truncate px-0.5">${person.name}</h3>
             
-            <p class="hidden sm:-webkit-box text-sm text-[#424235] line-clamp-3 mt-3 leading-relaxed">
+            <div class="flex flex-wrap gap-1 mt-1 sm:mt-1.5 px-0.5 mb-2 sm:mb-2.5">
+              <span class="inline-block px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-semibold border ${catClass}">${person.category}</span>
+            </div>
+            
+            <p class="hidden sm:-webkit-box text-xs text-slate-600 dark:text-slate-400 font-inter line-clamp-2 leading-relaxed px-0.5">
               ${person.bio}
             </p>
             
-            <div class="flex items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-4">
-              ${person.ig ? `<a href="${person.ig}" target="_blank" class="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-white/60 hover:bg-white/90 text-[#2A2A1A] transition-all shadow-sm">${getSVGIcon('ig')}</a>` : ''}
-              ${person.threads ? `<a href="${person.threads}" target="_blank" class="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-white/60 hover:bg-white/90 text-[#2A2A1A] transition-all shadow-sm">${getSVGIcon('threads')}</a>` : ''}
-              ${person.web ? `<a href="${person.web}" target="_blank" class="flex items-center justify-center w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-white/60 hover:bg-white/90 text-[#2A2A1A] transition-all shadow-sm">${getSVGIcon('web')}</a>` : ''}
+            <div class="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-4 px-0.5">
+              ${person.ig ? `<a href="${person.ig}" target="_blank" class="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">${getSVGIcon('ig')}</a>` : ''}
+              ${person.customLink ? `<a href="${person.customLink}" target="_blank" class="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">${getSVGIcon('customLink')}</a>` : ''}
+              ${person.web ? `<a href="${person.web}" target="_blank" class="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">${getSVGIcon('web')}</a>` : ''}
             </div>
           </div>
         </div>
@@ -128,7 +174,7 @@
       bio: document.getElementById('bio').value,
       photo: document.getElementById('photo').value,
       ig: document.getElementById('ig').value,
-      threads: document.getElementById('threads').value,
+      customLink: document.getElementById('customLink').value,
       web: document.getElementById('web').value,
     };
     

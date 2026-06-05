@@ -28,14 +28,14 @@ function ambilData() {
     
     return rows.map((row, i) => {
       // Index menyesuaikan dengan kolom di Sheet 
-      // [Timestamp, Nama, Kategori, Bio, IG, Threads, Web, URL_Foto]
+      // [Timestamp, Nama, Kategori, Bio, IG, CustomLink, Web, URL_Foto]
       return {
         id: i.toString(),
         name: row[1] || '',
         category: row[2] || '',
         bio: row[3] || '',
         ig: row[4] || '',
-        threads: row[5] || '',
+        customLink: row[5] || '',
         web: row[6] || '',
         photo: row[7] || ''
       };
@@ -51,7 +51,7 @@ function simpanData(formData) {
     
     // Setup header jika sheet kosong
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Timestamp', 'Nama', 'Kategori', 'Deskripsi/Bio', 'Link Instagram', 'Link Threads', 'Link Website', 'URL Foto']);
+      sheet.appendRow(['Timestamp', 'Nama', 'Kategori', 'Deskripsi/Bio', 'Link Instagram', 'Custom Link', 'Link Website', 'URL Foto']);
     }
     
     sheet.appendRow([
@@ -60,7 +60,7 @@ function simpanData(formData) {
       formData.category,
       formData.bio,
       formData.ig,
-      formData.threads,
+      formData.customLink,
       formData.web,
       formData.photo
     ]);
