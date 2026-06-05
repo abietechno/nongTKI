@@ -1,0 +1,8 @@
+{
+  "name": "NongTKI - Nongkrong Tenaga Kerja Indie",
+  "description": "Web directory khusus pekerja kreatif NongTKI yang memungkinkan client untuk mencari spesialis visual dan audio, lengkap dengan form pendaftaran mandiri.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NongTKI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+    .font-inter { font-family: 'Inter', sans-serif; }
+    .skeleton { background: #e2e8f0; border-radius: 12px; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: .5; } 100% { opacity: 1; } }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+  
+  <nav class="bg-white/80 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-14 sm:h-16 items-center">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold text-sm sm:text-base">NT</div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight">Nong<span class="text-slate-500">TKI</span></h1>
+        </div>
+        <button onclick="toggleModal('registerModal')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all shadow-sm active:scale-95">
+          <span class="sm:hidden">Daftar</span>
+          <span class="hidden sm:inline">Daftar Direktori</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 w-full max-w-7xl mx-auto pb-12 sm:py-12">
+    <div class="text-center px-4 pt-8 pb-6 sm:mb-12">
+      <div class="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 font-medium text-xs mb-4 border border-slate-200">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-500"></span>
+        </span>
+        Direktori Para Penggerak dan pelaku Kreatif Surabaya
+      </div>
+      <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mb-3 sm:mb-4">Nongkrong Tenaga Kerja Indie</h2>
+      <p class="max-w-xl mx-auto text-slate-500 font-inter text-sm sm:text-base">Temukan dan mulai kolaborasi dengan talenta-talenta kreatif terbaik dari ranah visual, audio, hingga desain.</p>
+    </div>
+
+    <!-- Filters Category -->
+    <div class="flex flex-nowrap overflow-x-auto hide-scrollbar gap-2 mb-6 sm:mb-10 px-4 sm:px-0 sm:justify-center snap-x pb-2" id="categoryFilters">
+      <div class="h-8 w-20 sm:h-10 sm:w-24 skeleton rounded-full flex-shrink-0"></div>
+      <div class="h-8 w-24 sm:h-10 sm:w-32 skeleton rounded-full flex-shrink-0"></div>
+    </div>
+
+    <!-- Loading Space -->
+    <div class="px-1.5 sm:px-4 xl:px-8">
+      <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1.5 sm:gap-6" id="creativeGrid">
+        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton rounded-xl sm:rounded-[32px]"></div>
+        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton rounded-xl sm:rounded-[32px]"></div>
+        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton rounded-xl sm:rounded-[32px]"></div>
+        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton hidden md:block rounded-xl sm:rounded-[32px]"></div>
+        <div class="aspect-square sm:aspect-[3/4] lg:aspect-[4/5] skeleton hidden lg:block rounded-xl sm:rounded-[32px]"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white py-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500 font-inter block sm:flex sm:items-center sm:justify-center gap-1">
+      NongTKI &copy; 2026. <span class="hidden sm:inline">&bull;</span> <span class="block sm:inline mt-1 sm:mt-0">From Surabaya with ❤️</span>
+    </div>
+  </footer>
+
+  <!-- Modal Registration Form -->
+  <div id="registerModal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-200" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="toggleModal('registerModal')"></div>
+      <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-lg">
+        <form id="registerForm" onsubmit="submitForm(event)">
+          <div class="bg-white px-6 py-6 border-b border-slate-100 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-slate-900">Form Kreator Baru</h3>
+            <button type="button" onclick="toggleModal('registerModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          <div class="px-6 py-5 space-y-5 max-h-[60vh] overflow-y-auto font-inter text-sm">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1.5">Nama / Nama Bisnis</label>
+              <input type="text" id="name" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 transition-colors" placeholder="Cth: Budi Santoso / Budi Visuals">
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1.5">Kategori Bidang</label>
+              <select id="category" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800 bg-white">
+                <option value="">Pilih Spesialisasi Pekerjaan...</option>
+                <option value="Photographer">Photographer</option>
+                <option value="Mural Art">Mural Art</option>
+                <option value="Sound Engineer">Sound Engineer</option>
+                <option value="Video Director">Video Director</option>
+                <option value="Graphic Designer">Graphic Designer</option>
+                <option value="Animator">Animator</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1.5">Bio / Deskripsi Singkat</label>
+              <textarea id="bio" required rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800" placeholder="Ceritakan gaya, pengalaman, atau apa yang kamu tawarkan..."></textarea>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 mb-1.5">URL Cover Profil</label>
+              <input type="url" id="photo" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-800" placeholder="https://link-ke-foto-mu.jpg">
+            </div>
+            <div class="grid grid-cols-2 gap-4 border-t border-slate-100 pt-5">
+              <div class="col-span-2"><p class="font-medium text-slate-700 mb-[-5px]">Social & Portfolio</p></div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1.5 text-xs">Instagram</label>
+                <input type="url" id="ig" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-xs focus:border-slate-800 focus:outline-none" placeholder="https://instagram.com/...">
+              </div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1.5 text-xs">Threads</label>
+                <input type="url" id="threads" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-xs focus:border-slate-800 focus:outline-none" placeholder="https://threads.net/...">
+              </div>
+              <div class="col-span-2">
+                <label class="block font-medium text-slate-600 mb-1.5 text-xs">Website / Behance</label>
+                <input type="url" id="web" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-xs focus:border-slate-800 focus:outline-none" placeholder="https://...">
+              </div>
+            </div>
+          </div>
+          <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3 rounded-b-2xl border-t border-slate-100">
+            <button type="submit" id="submitBtn" class="inline-flex w-full sm:w-auto justify-center items-center rounded-lg bg-slate-900 px-5 py-2.5 font-medium text-white hover:bg-slate-800 transition-colors">
+              Simpan Profil
+            </button>
+            <button type="button" onclick="toggleModal('registerModal')" class="inline-flex w-full sm:w-auto justify-center items-center rounded-lg bg-white border border-slate-300 px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+              Batal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <?!= include('JavaScript'); ?>
+</body>
+</html>
