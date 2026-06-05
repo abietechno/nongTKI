@@ -167,9 +167,10 @@ export default function App() {
       <nav className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border-b border-teal-100/50 dark:border-white/5 sticky top-0 z-30 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-teal-600 dark:bg-teal-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/20 text-sm font-bold">NT</div>
-              <h1 className="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100">Nong<span className="text-teal-600 dark:text-teal-400">TKI</span></h1>
+            <div className="flex items-center">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tighter text-slate-900 dark:text-white font-sans uppercase">
+                TENAGA KERJA <span className="text-teal-600 dark:text-teal-400 normal-case lowercase font-bold italic ml-1">Indie</span>
+              </h1>
             </div>
             
             <div className="flex items-center gap-2.5 sm:gap-4">
