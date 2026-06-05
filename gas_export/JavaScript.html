@@ -112,18 +112,24 @@
       .ambilData();
   }
 
+  function generateInitialsAvatar(name) {
+    const initials = name.split(' ').map(n => n.charAt(0)).filter(Boolean).join('').substring(0, 3).toUpperCase();
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="#0D8B93"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="200" font-weight="bold">${initials}</text></svg>`;
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+  }
+
   function getDisplayImage(person) {
     if (person.photo && person.photo.trim() !== '') return person.photo;
     if (person.ig && person.ig.trim() !== '') {
       var match = person.ig.match(/(?:instagram\.com|ig\.me)\/([^/?]+)/i);
       if (match && match[1]) {
-        return 'https://unavatar.io/instagram/' + match[1] + '?fallback=' + encodeURIComponent('https://ui-avatars.com/api/?name=' + encodeURIComponent(person.name) + '&background=0D8B93&color=fff&size=512');
+        return 'https://unavatar.io/instagram/' + match[1] + '?fallback=' + encodeURIComponent(generateInitialsAvatar(person.name));
       }
     }
     if (person.web && person.web.trim() !== '') {
       return 'https://image.thum.io/get/width/600/crop/800/' + person.web;
     }
-    return 'https://ui-avatars.com/api/?name=' + encodeURIComponent(person.name) + '&background=0D8B93&color=fff&size=512';
+    return generateInitialsAvatar(person.name);
   }
 
   function getSVGIcon(type) {
@@ -152,26 +158,19 @@
       const catClass = getColorClass(person.category);
       const displayImage = getDisplayImage(person);
       return `
-        <div class="group relative aspect-square sm:aspect-[4/5] rounded-2xl sm:rounded-[32px] overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:shadow-teal-500/10 transition-all duration-500 transform hover:-translate-y-1">
-          <img src="${displayImage}" alt="${person.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onerror="if(!this.src.includes('ui-avatars.com')){this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512';}">
-          
-          <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none"></div>
-          
-          <div class="absolute inset-x-2 bottom-2 sm:inset-x-3 sm:bottom-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col transition-colors duration-300">
-            <h3 class="text-sm sm:text-lg font-bold text-slate-900 dark:text-white leading-tight truncate px-0.5">${person.name}</h3>
-            
-            <div class="flex flex-wrap gap-1 mt-1 sm:mt-1.5 px-0.5 mb-2 sm:mb-2.5">
-              <span class="inline-block px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-semibold border ${catClass}">${person.category}</span>
+        <div class="group relative p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-[32px] overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 shadow-sm hover:shadow-xl dark:shadow-none hover:shadow-teal-500/10 transition-all duration-500 transform hover:-translate-y-1 flex flex-col h-full min-h-[200px] sm:min-h-[220px]">
+          <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <img src="${displayImage}" alt="${person.name}" class="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full object-cover border-2 border-slate-100 dark:border-slate-800 shadow-sm shrink-0" loading="lazy" onerror="if(!this.src.startsWith('data:image/svg+xml')){this.src=generateInitialsAvatar('${person.name}');}">
+            <div class="flex flex-col pt-0 sm:pt-1">
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-slate-900 dark:text-white leading-tight break-words line-clamp-2">${person.name}</h3>
+              <div class="mt-1.5 sm:mt-2 text-left">
+                <span class="inline-block px-2 py-0.5 sm:py-1 rounded text-[9px] sm:text-[10px] lg:text-xs font-semibold border ${catClass}">${person.category}</span>
+              </div>
             </div>
-            
-            <p class="hidden sm:-webkit-box text-xs text-slate-600 dark:text-slate-400 font-inter line-clamp-2 leading-relaxed px-0.5">
-              ${person.bio}
-            </p>
-            
-            <div class="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-4 px-0.5">
-              ${person.ig ? `<a href="${person.ig}" target="_blank" class="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">${getSVGIcon('ig')}</a>` : ''}
-              ${person.customLink ? `<a href="${person.customLink}" target="_blank" class="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">${getSVGIcon('customLink')}</a>` : ''}
-              ${person.web ? `<a href="${person.web}" target="_blank" class="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shadow-sm border border-slate-200 dark:border-slate-700">${getSVGIcon('web')}</a>` : ''}
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-inter line-clamp-3 lg:line-clamp-4 leading-relaxed flex-1 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+            ${person.bio}
+          </p>
             </div>
           </div>
         </div>

@@ -33,13 +33,19 @@ const getColorForCategory = (cat: string) => {
   return colors[hash % colors.length];
 };
 
+const generateInitialsAvatar = (name: string) => {
+  const initials = name.split(' ').map(n => n.charAt(0)).filter(Boolean).join('').substring(0, 3).toUpperCase();
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="#0D8B93"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="200" font-weight="bold">${initials}</text></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+};
+
 const getDisplayImage = (person: Creative) => {
   if (person.photo && person.photo.trim() !== '') return person.photo;
   
   if (person.ig && person.ig.trim() !== '') {
     const match = person.ig.match(/(?:instagram\.com|ig\.me)\/([^/?]+)/i);
     if (match && match[1]) {
-      return `https://unavatar.io/instagram/${match[1]}?fallback=` + encodeURIComponent(`https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512`);
+      return `https://unavatar.io/instagram/${match[1]}?fallback=` + encodeURIComponent(generateInitialsAvatar(person.name));
     }
   }
   
@@ -47,7 +53,7 @@ const getDisplayImage = (person: Creative) => {
     return `https://image.thum.io/get/width/600/crop/800/${person.web}`;
   }
   
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512`;
+  return generateInitialsAvatar(person.name);
 };
 
 export default function App() {
@@ -255,8 +261,8 @@ export default function App() {
                       loading="lazy"
                       onError={(e) => {
                         const target = e.currentTarget;
-                        if (!target.src.includes('ui-avatars.com')) {
-                          target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8B93&color=fff&size=512`;
+                        if (!target.src.startsWith('data:image/svg+xml')) {
+                          target.src = generateInitialsAvatar(person.name);
                         }
                       }}
                     />
@@ -296,7 +302,12 @@ export default function App() {
                </button>
              </div>
              <div className="px-6 pb-8 pt-0 relative flex-1 overflow-y-auto hide-scrollbar">
-               <img src={getDisplayImage(selectedPerson)} className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg mx-auto -mt-12 sm:-mt-14 relative z-10 bg-white" />
+               <img src={getDisplayImage(selectedPerson)} className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg mx-auto -mt-12 sm:-mt-14 relative z-10 bg-white" onError={(e) => {
+                 const target = e.currentTarget;
+                 if (!target.src.startsWith('data:image/svg+xml')) {
+                   target.src = generateInitialsAvatar(selectedPerson.name);
+                 }
+               }} />
                <div className="text-center mt-3 mb-6">
                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-tight">{selectedPerson.name}</h2>
                  <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold border ${getColorForCategory(selectedPerson.category)}`}>
