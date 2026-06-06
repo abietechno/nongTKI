@@ -301,14 +301,19 @@ export default function App() {
                   <X className="w-5 h-5" />
                </button>
              </div>
-             <div className="px-6 pb-8 pt-0 relative flex-1 overflow-y-auto hide-scrollbar">
-               <img src={getDisplayImage(selectedPerson)} className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg mx-auto -mt-12 sm:-mt-14 relative z-10 bg-white" onError={(e) => {
+             
+             {/* Profile image absolute positioned to avoid clipping by overflow-y-auto */}
+             <div className="absolute top-32 sm:top-40 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+               <img src={getDisplayImage(selectedPerson)} className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg bg-white" onError={(e) => {
                  const target = e.currentTarget;
                  if (!target.src.startsWith('data:image/svg+xml')) {
                    target.src = generateInitialsAvatar(selectedPerson.name);
                  }
                }} />
-               <div className="text-center mt-3 mb-6">
+             </div>
+
+             <div className="px-6 pb-8 pt-14 sm:pt-16 relative flex-1 overflow-y-auto hide-scrollbar">
+               <div className="text-center mt-2 mb-6">
                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-tight">{selectedPerson.name}</h2>
                  <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold border ${getColorForCategory(selectedPerson.category)}`}>
                    {selectedPerson.category}
