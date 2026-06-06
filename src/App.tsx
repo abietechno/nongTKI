@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Instagram, AtSign, Globe, Plus, X, BriefcaseBusiness, Loader2, Moon, Sun, Phone, Mail } from 'lucide-react';
+import { Instagram, AtSign, Globe, Plus, X, BriefcaseBusiness, Loader2, Moon, Sun, Phone, Mail, MapPin } from 'lucide-react';
 import { Category, Creative } from './types';
 
 // Mock Data for the immediate AI Studio preview (not connected to GAS)
 const INITIAL_DATA: Creative[] = [
-  { id: '1', name: 'Ivan Visuals', category: 'Photographer', bio: 'Specialist in street aesthetics and modern documentary wedding photography. Capturing the authentic vibe of Surabaya.', ig: 'https://instagram.com/visualivan', customLink: '', web: '', photo: 'https://images.unsplash.com/photo-1554046920-90dcac824af0?auto=format&fit=crop&w=800&q=80' },
-  { id: '2', name: 'Alfi Soundworks', category: 'Sound Engineer', bio: 'Freelance mixing and mastering engineer. I make sure your tracks sound punchy across all streaming platforms.', ig: 'https://instagram.com/alfi_sound', customLink: 'https://linktr.ee/alfi', web: 'https://alfi.audio', photo: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=800&q=80' },
-  { id: '3', name: 'Surabaya Canvas Project', category: 'Mural Art', bio: 'Collective of urban muralists painting walls and transforming commercial spaces into visual landmarks.', ig: '', customLink: '', web: 'https://canvasproject.id', photo: 'https://images.unsplash.com/photo-1563212046-6b2a0c4f8069?auto=format&fit=crop&w=800&q=80' },
-  { id: '4', name: 'Lintang Motion', category: 'Animator', bio: '2D & 3D motion designer focused on bold, colorful, and engaging explainer videos.', ig: 'https://instagram.com/lintang.fx', customLink: '', web: '', photo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80' }
+  { id: '1', name: 'Ivan Visuals', category: 'Photographer', location: 'Surabaya, Indonesia', bio: 'Specialist in street aesthetics and modern documentary wedding photography. Capturing the authentic vibe of Surabaya.', ig: 'https://instagram.com/visualivan', customLink: '', web: '', photo: 'https://images.unsplash.com/photo-1554046920-90dcac824af0?auto=format&fit=crop&w=800&q=80' },
+  { id: '2', name: 'Alfi Soundworks', category: 'Sound Engineer', location: 'Sidoarjo', bio: 'Freelance mixing and mastering engineer. I make sure your tracks sound punchy across all streaming platforms.', ig: 'https://instagram.com/alfi_sound', customLink: 'https://linktr.ee/alfi', web: 'https://alfi.audio', photo: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=800&q=80' },
+  { id: '3', name: 'Surabaya Canvas Project', category: 'Mural Art', location: 'Surabaya, Indonesia', bio: 'Collective of urban muralists painting walls and transforming commercial spaces into visual landmarks.', ig: '', customLink: '', web: 'https://canvasproject.id', photo: 'https://images.unsplash.com/photo-1563212046-6b2a0c4f8069?auto=format&fit=crop&w=800&q=80' },
+  { id: '4', name: 'Lintang Motion', category: 'Animator', location: 'Gresik', bio: '2D & 3D motion designer focused on bold, colorful, and engaging explainer videos.', ig: 'https://instagram.com/lintang.fx', customLink: '', web: '', photo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80' }
 ];
 
 const CatColors: Record<string, string> = {
@@ -84,7 +84,7 @@ export default function App() {
   const dynamicCategories = ['Semua', ...Array.from(new Set(data.map(item => item.category)))];
 
   // Form State
-  const [formData, setFormData] = useState({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '' });
+  const [formData, setFormData] = useState({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '', location: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const ENDPOINT_API = import.meta.env.VITE_GAS_ENDPOINT_URL;
@@ -134,7 +134,7 @@ export default function App() {
         setData((prev) => [newEntry, ...prev]);
         
         setIsModalOpen(false);
-        setFormData({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '' });
+        setFormData({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '', location: '' });
         setFilter('Semua');
       } catch (error) {
         console.error("Gagal simpan:", error);
@@ -152,7 +152,7 @@ export default function App() {
         setData((prev) => [newEntry, ...prev]);
         setIsSubmitting(false);
         setIsModalOpen(false);
-        setFormData({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '' });
+        setFormData({ name: '', category: '', bio: '', photo: '', ig: '', customLink: '', web: '', phone: '', email: '', location: '' });
         setFilter('Semua');
       }, 1200);
     }
@@ -268,10 +268,16 @@ export default function App() {
                     />
                     <div className="flex flex-col pt-0 sm:pt-1">
                       <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 dark:text-white leading-tight break-words line-clamp-2">{person.name}</h3>
-                      <div className="mt-1.5 sm:mt-2 text-left">
+                      <div className="mt-1.5 sm:mt-2 text-left flex flex-col items-start gap-1">
                         <span className={`inline-block px-2 py-0.5 sm:py-1 rounded text-[9px] sm:text-[10px] lg:text-xs font-semibold border ${catClass}`}>
                           {person.category}
                         </span>
+                        {person.location && (
+                          <span className="flex items-center gap-1 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400">
+                            <MapPin className="w-3 h-3" />
+                            {person.location}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -315,9 +321,17 @@ export default function App() {
              <div className="px-6 pb-8 pt-14 sm:pt-16 relative flex-1 overflow-y-auto hide-scrollbar">
                <div className="text-center mt-2 mb-6">
                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-tight">{selectedPerson.name}</h2>
-                 <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold border ${getColorForCategory(selectedPerson.category)}`}>
-                   {selectedPerson.category}
-                 </span>
+                 <div className="flex items-center justify-center gap-2 mt-2">
+                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold border ${getColorForCategory(selectedPerson.category)}`}>
+                     {selectedPerson.category}
+                   </span>
+                   {selectedPerson.location && (
+                     <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                       <MapPin className="w-3.5 h-3.5" />
+                       {selectedPerson.location}
+                     </span>
+                   )}
+                 </div>
                </div>
                <div className="space-y-6">
                  <div>
@@ -389,6 +403,12 @@ export default function App() {
                       <option key={cat} value={cat} />
                     ))}
                   </datalist>
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5 text-xs flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5" /> Lokasi <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded text-[10px] font-medium border border-slate-200 dark:border-slate-700">Opsional</span>
+                  </label>
+                  <input value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} type="text" className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none transition-all placeholder:text-slate-400 dark:text-white" placeholder="Cth: Surabaya, Sidoarjo..." />
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1.5 text-xs">Bio / Deskripsi Profil</label>

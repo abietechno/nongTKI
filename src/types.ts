@@ -11,4 +11,5 @@ export interface Creative {
   photo?: string;
   phone?: string;
   email?: string;
+  location?: string;
 }
